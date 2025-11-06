@@ -12,11 +12,7 @@
 */
 
 pest()->extend(Tests\TestCase::class)
-<<<<<<< HEAD
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-=======
- // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
->>>>>>> origin/Deniz
     ->in('Feature');
 
 /*
