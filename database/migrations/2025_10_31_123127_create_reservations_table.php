@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('employee_name');
             $table->string('email');
-            $table->string('item_name');
+            $table->string('inventaris');
             $table->date('date');
             $table->time('time');
             $table->timestamps();

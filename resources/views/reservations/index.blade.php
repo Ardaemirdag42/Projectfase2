@@ -62,7 +62,7 @@
             @foreach($reservations as $reservation)
                 <tr>
                     <td>{{ $reservation->employee_name }}</td>
-                    <td>{{ $reservation->item_name }}</td>
+                    <td>{{ $reservation->inventaris }}</td>
                     <td>{{ $reservation->date }}</td>
                     <td>{{ $reservation->time }}</td>
                     <td>{{ $reservation->status }}</td>
