@@ -27,6 +27,7 @@
     <form action="/reservations" method="POST">
         @csrf
         <input type="text" name="employee_name" placeholder="Naam medewerker" value="{{ old('employee_name') }}" required>
+        <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required>
         <input type="text" name="item_name" placeholder="Item" value="{{ old('item_name') }}" required>
         <input type="date" name="date" value="{{ old('date') }}" required>
         <input type="time" name="time" value="{{ old('time') }}" required>

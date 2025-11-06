@@ -19,29 +19,40 @@ class ReservationController extends Controller
     }
 
     public function store(Request $request) {
-        // Valideer input
-        $request->validate([
-            'employee_name' => 'required',
-            'item_name' => 'required',
-            'date' => 'required|date',
-            'time' => 'required',
-        ]);
+    // Valideer input
+    $request->validate([
+        'employee_name' => 'required',
+        'email' => 'required|email',
+        'item_name' => 'required',
+        'date' => 'required|date',
+        'time' => 'required',
+    ]);
 
-        // Check dubbele reservering
-        $exists = Reservation::where('item_name', $request->item_name)
-            ->where('date', $request->date)
-            ->where('time', $request->time)
-            ->exists();
+    // Check dubbele reservering voor hetzelfde item op hetzelfde tijdstip
+    $itemExists = Reservation::where('item_name', $request->item_name)
+        ->where('date', $request->date)
+        ->where('time', $request->time)
+        ->exists();
 
-        if($exists){
-            return back()->withErrors(['msg' => 'Dit item is al gereserveerd op dit tijdstip.']);
-        }
-
-        // Sla op
-        Reservation::create($request->all());
-
-        return redirect('/')->with('success', 'Reservering succesvol aangemaakt!');
+    if ($itemExists) {
+        return back()->withErrors(['msg' => 'Dit item is al gereserveerd op dit tijdstip.']);
     }
+
+    // Check dubbele reservering voor dezelfde persoon op dezelfde dag
+    $personExists = Reservation::where('email', $request->email)
+        ->where('date', $request->date)
+        ->exists();
+
+    if ($personExists) {
+        return back()->withErrors(['msg' => 'Deze persoon heeft al een reservering op deze dag.']);
+    }
+
+    // Sla op
+    Reservation::create($request->all());
+
+    return redirect('/')->with('success', 'Reservering succesvol aangemaakt!');
+}
+
 
     public function edit($id) {
         $reservation = Reservation::findOrFail($id);
@@ -49,35 +60,50 @@ class ReservationController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $reservation = Reservation::findOrFail($id);
+    $reservation = Reservation::findOrFail($id);
 
-        $request->validate([
-            'employee_name' => 'required',
-            'item_name' => 'required',
-            'date' => 'required|date',
-            'time' => 'required',
-        ]);
+    $request->validate([
+        'employee_name' => 'required',
+        'email' => 'required|email',
+        'item_name' => 'required',
+        'date' => 'required|date',
+        'time' => 'required',
+    ]);
 
-        // Check dubbele reservering
-        $exists = Reservation::where('item_name', $request->item_name)
-            ->where('date', $request->date)
-            ->where('time', $request->time)
-            ->where('id', '!=', $id)
-            ->exists();
+    // Check dubbele reservering voor hetzelfde item op hetzelfde tijdstip (anders dan huidige)
+    $itemExists = Reservation::where('item_name', $request->item_name)
+        ->where('date', $request->date)
+        ->where('time', $request->time)
+        ->where('id', '!=', $id)
+        ->exists();
 
-        if($exists){
-            return back()->withErrors(['msg' => 'Dit item is al gereserveerd op dit tijdstip.']);
-        }
-
-        $reservation->update($request->all());
-
-        Mail::to(auth()->user()->email)->send(new ReservationConfirmed($reservation));
-
-        return redirect('/')->with('success', 'Reservering aangepast!');
+    if ($itemExists) {
+        return back()->withErrors(['msg' => 'Dit item is al gereserveerd op dit tijdstip.']);
     }
 
-    public function destroy($id) {
-        Reservation::findOrFail($id)->delete();
-        return redirect('/')->with('success', 'Reservering verwijderd!');
+    // Check dubbele reservering voor dezelfde persoon op dezelfde dag (anders dan huidige)
+    $personExists = Reservation::where('email', $request->email)
+        ->where('date', $request->date)
+        ->where('id', '!=', $id)
+        ->exists();
+
+    if ($personExists) {
+        return back()->withErrors(['msg' => 'Deze persoon heeft al een reservering op deze dag.']);
     }
+
+    $reservation->update($request->all());
+
+    Mail::to(auth()->user()->email)->send(new ReservationConfirmed($reservation));
+
+    return redirect('/')->with('success', 'Reservering aangepast!');
+}
+
+public function destroy($id) {
+    $reservation = Reservation::findOrFail($id); // Vind de reservering of geef 404
+    $reservation->delete(); // Verwijder uit de database
+
+    return redirect('/')->with('success', 'Reservering verwijderd!');
+}
+
+
 }
