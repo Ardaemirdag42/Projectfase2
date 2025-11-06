@@ -6,7 +6,7 @@ use App\Http\Controllers\InventarisController;
 use Illuminate\Support\Facades\Route;
 
 // Reservation routes
-Route::get('/', [ReservationController::class, 'index']);
+Route::get('/reservations', [ReservationController::class, 'index']);
 Route::get('/reservations/create', [ReservationController::class, 'create']);
 Route::post('/reservations', [ReservationController::class, 'store']);
 Route::get('/reservations/{id}/edit', [ReservationController::class, 'edit']);
@@ -14,7 +14,7 @@ Route::put('/reservations/{id}', [ReservationController::class, 'update']);
 Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
 
 // Dashboard & Auth routes
-Route::get('/dashboard', function () {
+Route::get('/', function () {
     return view('dashboard');
 })->middleware('auth')->name('dashboard');
 
