@@ -14,7 +14,7 @@
         </a>
 
         <div class="flex items-center gap-4">
-            <a href="{{ url('/') }}" class="hover:text-green-400">Games</a>
+            <a href="{{ url('/games') }}" class="hover:text-green-400">Games</a>
 
             @auth
                 <a href="{{ url('/library') }}" class="hover:text-green-400">

@@ -44,14 +44,14 @@ class ReviewController extends Controller
 
     // Review verwijderen (alleen voor admins)
     public function destroy(Review $review)
-    {
-        if (!Auth::user() || !Auth::user()->is_admin) {
-            abort(403);
-        }
+{
+        if (!auth()->user() || !auth()->user()->is_admin) {
+        abort(403, 'Je hebt geen toestemming.');
+    }
 
         $review->delete();
 
-        return redirect()->route('reviews.index')
-            ->with('success', 'Review verwijderd!');
+        return redirect()->route('reviews.index')->with('success', 'Review verwijderd!');
     }
+
 }

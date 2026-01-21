@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('console'); 
             $table->text('description')->nullable();
+            $table->decimal('price', 8, 2)->default(0);
             $table->string('file_path')->nullable();
             $table->timestamps();
         });
