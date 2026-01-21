@@ -9,14 +9,25 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Maak een specifieke testuser
+        // Maak een specifieke admin user
+        User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => bcrypt('admin123'), // Kies een veilig wachtwoord
+            'is_admin' => 1, // Admin
+        ]);
+
+        // Maak een specifieke testuser (gewone gebruiker)
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => bcrypt('password'),
+            'is_admin' => 0,
         ]);
 
-        // Maak nog 9 willekeurige users
-        User::factory()->count(9)->create();
+        // Maak nog 8 willekeurige gewone users
+        User::factory()->count(8)->create([
+            'is_admin' => 0,
+        ]);
     }
 }

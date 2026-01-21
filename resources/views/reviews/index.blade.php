@@ -15,11 +15,38 @@
 
     <!-- Reviews lijst -->
     <div class="space-y-6">
-        @foreach($reviews as $review)
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <h3 class="text-lg font-semibold mb-1">{{ $review->game->title }} - {{ $review->rating }}/5 ⭐</h3>
+        @foreach($reviews as $review) <!-- <--- loop over alle reviews -->
+            <div class="bg-white shadow-md rounded-lg p-6 relative">
+                <h3 class="text-lg font-semibold mb-1">
+                    {{ $review->game->title }} - {{ $review->rating }}/5 ⭐
+                </h3>
+
                 <p class="mb-3 text-gray-700">{{ $review->content }}</p>
-                <small class="text-gray-500">Geschreven door: {{ $review->user->name }} op {{ $review->created_at->format('d-m-Y') }}</small>
+
+                <small class="text-gray-500 block mb-3">
+                    Geschreven door: {{ $review->user->name }}
+                    op {{ $review->created_at->format('d-m-Y') }}
+                </small>
+
+                {{-- Alleen admins zien deze knop --}}
+                @auth
+                    @if(auth()->user()->is_admin)
+                        <form
+                            action="{{ route('reviews.destroy', $review) }}"
+                            method="POST"
+                            onsubmit="return confirm('Weet je zeker dat je deze review wilt verwijderen?')"
+                        >
+                            @csrf
+                            @method('DELETE')
+
+                            <button
+                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+                            >
+                                Verwijderen
+                            </button>
+                        </form>
+                    @endif
+                @endauth
             </div>
         @endforeach
     </div>

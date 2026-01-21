@@ -41,4 +41,17 @@ class ReviewController extends Controller
 
         return redirect()->route('reviews.index')->with('success', 'Review geplaatst!');
     }
+
+    // Review verwijderen (alleen voor admins)
+    public function destroy(Review $review)
+    {
+        if (!Auth::user() || !Auth::user()->is_admin) {
+            abort(403);
+        }
+
+        $review->delete();
+
+        return redirect()->route('reviews.index')
+            ->with('success', 'Review verwijderd!');
+    }
 }

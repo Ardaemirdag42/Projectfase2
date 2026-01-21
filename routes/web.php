@@ -4,14 +4,30 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\AdminAuthController;
 
 // AUTH ROUTES
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
+    Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])
+    ->name('admin.login');
+
+    Route::post('/admin/login', [AdminAuthController::class, 'login'])
+    ->name('admin.login.submit');
+
+    Route::post('/admin/logout', [AdminAuthController::class, 'logout'])
+    ->name('admin.logout');
+
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
+
+    Route::get('/admin/register', [AdminAuthController::class, 'showRegister'])
+    ->name('admin.register');
+
+    Route::post('/admin/register', [AdminAuthController::class, 'register'])
+    ->name('admin.register.submit');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])
@@ -36,3 +52,7 @@ Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index'
 
 // Review aanmaken formulier (alleen ingelogde users)
 Route::get('/reviews/create', [ReviewController::class, 'create'])->name('reviews.create')->middleware('auth');
+
+Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
+    ->name('reviews.destroy')
+    ->middleware(['auth', 'admin']);
