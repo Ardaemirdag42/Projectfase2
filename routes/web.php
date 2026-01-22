@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ConsoleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [GameController::class, 'index'])->name('home');
+
 /*
 |--------------------------------------------------------------------------
 | Guest routes (niet ingelogd)
@@ -52,12 +54,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/reviews/create', [ReviewController::class, 'create'])->name('reviews.create');
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
-    // Admin-only routes
+    // Games beheren (admin-check IN de controller)
     Route::get('/games/create', [GameController::class, 'create'])->name('games.create');
     Route::post('/games', [GameController::class, 'store'])->name('games.store');
+    Route::get('/games/{game}/edit', [GameController::class, 'edit'])->name('games.edit');
+    Route::put('/games/{game}', [GameController::class, 'update'])->name('games.update');
+    Route::delete('/games/{game}', [GameController::class, 'destroy'])->name('games.destroy');
 
-    // Admin reviews verwijderen
+    // Reviews verwijderen (admin-check IN controller)
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    // Consoles beheren (admin-check IN controller)
+    Route::get('/consoles/create', [ConsoleController::class, 'create'])->name('consoles.create');
+    Route::post('/consoles', [ConsoleController::class, 'store'])->name('consoles.store');
 });
 
 /*
@@ -71,3 +80,27 @@ Route::get('/games/{game}', [GameController::class, 'show'])->name('games.show')
 
 // Reviews bekijken (voor iedereen)
 Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+
+/*
+|--------------------------------------------------------------------------
+| Winkelwagen routes (alleen voor gewone gebruikers)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', function () {
+        $user = auth()->user();
+        if ($user->is_admin) {
+            abort(403, 'Admins kunnen geen winkelwagen gebruiken.');
+        }
+        return view('cart.index'); // maak deze view aan
+    })->name('cart.index');
+
+    Route::post('/cart/checkout', function () {
+        $user = auth()->user();
+        if ($user->is_admin) {
+            abort(403, 'Admins kunnen geen winkelwagen gebruiken.');
+        }
+        // hier kan je de checkout logica plaatsen
+        return redirect()->route('home')->with('success', 'Aankoop voltooid!');
+    })->name('cart.checkout');
+});

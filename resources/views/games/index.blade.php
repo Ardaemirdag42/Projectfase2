@@ -30,7 +30,30 @@
                 </p>
 
                 <p class="text-gray-600 mt-2">{{ Str::limit($game->description, 100) }}</p>
-                <a href="{{ route('games.show', $game) }}" class="text-blue-500 mt-4 inline-block">Bekijk game</a>
+                
+                {{-- Bekijk game link --}}
+                <a href="{{ route('games.show', ['game' => $game->id]) }}" 
+                   class="text-blue-500 mt-4 inline-block mr-2">
+                    Bekijk game
+                </a>
+
+                {{-- Admin acties: bewerken & verwijderen --}}
+                @auth
+                    @if(auth()->user()->is_admin)
+                        <a href="{{ route('games.edit', ['game' => $game->id]) }}" 
+                           class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm mr-2">
+                            Bewerk
+                        </a>
+
+                        <form action="{{ route('games.destroy', ['game' => $game->id]) }}" method="POST" class="inline-block" onsubmit="return confirm('Weet je zeker dat je deze game wilt verwijderen?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                                Verwijder
+                            </button>
+                        </form>
+                    @endif
+                @endauth
             </div>
         @endforeach
     </div>

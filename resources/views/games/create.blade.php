@@ -18,7 +18,15 @@
         @csrf
 
         <input type="text" name="title" placeholder="Titel" class="w-full border px-3 py-2 rounded mb-4" required>
-        <input type="text" name="console" placeholder="Console" class="w-full border px-3 py-2 rounded mb-4" required>
+
+        <!-- Console dropdown -->
+        <select name="console" class="w-full border px-3 py-2 rounded mb-4" required>
+            <option value="" disabled selected>Kies een console</option>
+            @foreach($consoles as $console)
+                <option value="{{ $console->name }}">{{ $console->name }}</option>
+            @endforeach
+        </select>
+
         <textarea name="description" placeholder="Beschrijving" class="w-full border px-3 py-2 rounded mb-4"></textarea>
         <input type="number" name="price" placeholder="Prijs" step="0.01" class="w-full border px-3 py-2 rounded mb-4" required>
         <input type="text" name="file_path" placeholder="Bestandspad (optioneel)" class="w-full border px-3 py-2 rounded mb-4">

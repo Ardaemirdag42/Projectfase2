@@ -9,11 +9,12 @@ use Illuminate\Support\Facades\Auth;
 class LibraryController extends Controller
 {
     public function index()
-    {
-        $user = auth()->user();
-        $games = $user->libraryGames; // afhankelijk van je relatie
-        return view('library.index', compact('games'));
-    }
+{
+    $user = auth()->user();
+    $games = $user->libraryGames()->get(); // 🔥 altijd een Collection
+
+    return view('library.index', compact('games'));
+}
 
 
     public function store(Game $game)
