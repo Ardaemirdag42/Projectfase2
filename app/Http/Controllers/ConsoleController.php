@@ -31,6 +31,7 @@ class ConsoleController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:consoles,name',
+            'name.required' => 'Vul een console naam in.',
         ]);
 
         Console::create([
