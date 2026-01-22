@@ -47,7 +47,7 @@ class User extends Authenticatable
     /**
      * Games in de bibliotheek van de gebruiker
      */
-    public function libraryGames()
+    public function libraryItems()
     {
         return $this->belongsToMany(Game::class, 'library_items');
     }

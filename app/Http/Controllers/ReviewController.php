@@ -9,21 +9,40 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
-    // Alle reviews bekijken
-    public function index()
+    /**
+     * Alle reviews bekijken, met filter op game
+     */
+    public function index(Request $request)
     {
-        $reviews = Review::with('game', 'user')->latest()->get();
-        return view('reviews.index', compact('reviews'));
+        // Haal alle games op voor de filter-dropdown
+        $games = Game::all();
+
+        // Start query voor reviews
+        $query = Review::with('game', 'user')->latest();
+
+        // Filter op game als er een filter geselecteerd is
+        if ($request->filled('game_id')) {
+            $query->where('game_id', $request->game_id);
+        }
+
+        $reviews = $query->get();
+
+        // Stuur zowel reviews als games naar de view
+        return view('reviews.index', compact('reviews', 'games'));
     }
 
-    // Formulier om een nieuwe review te maken
+    /**
+     * Formulier om een nieuwe review te maken
+     */
     public function create()
     {
         $games = Game::all(); // lijst van games voor dropdown
         return view('reviews.create', compact('games'));
     }
 
-    // Review opslaan
+    /**
+     * Review opslaan
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -42,16 +61,17 @@ class ReviewController extends Controller
         return redirect()->route('reviews.index')->with('success', 'Review geplaatst!');
     }
 
-    // Review verwijderen (alleen voor admins)
+    /**
+     * Review verwijderen (alleen voor admins)
+     */
     public function destroy(Review $review)
-{
+    {
         if (!auth()->user() || !auth()->user()->is_admin) {
-        abort(403, 'Je hebt geen toestemming.');
-    }
+            abort(403, 'Je hebt geen toestemming.');
+        }
 
         $review->delete();
 
         return redirect()->route('reviews.index')->with('success', 'Review verwijderd!');
     }
-
 }

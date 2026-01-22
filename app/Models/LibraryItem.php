@@ -13,13 +13,13 @@ class LibraryItem extends Model
         'game_id',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function game()
     {
         return $this->belongsTo(Game::class);
+    }
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

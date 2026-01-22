@@ -13,9 +13,25 @@
         </div>
     @endauth
 
+    <!-- Filter dropdown -->
+    <div class="mb-6 flex justify-center">
+        <form method="GET" action="{{ route('reviews.index') }}" class="flex gap-2 items-center">
+            <label for="game_id" class="font-medium">Filter op game:</label>
+            <select name="game_id" id="game_id" class="border rounded px-3 py-1">
+                <option value="">Alle games</option>
+                @foreach($games as $game)
+                    <option value="{{ $game->id }}" {{ request('game_id') == $game->id ? 'selected' : '' }}>
+                        {{ $game->title }}
+                    </option>
+                @endforeach
+            </select>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">Filter</button>
+        </form>
+    </div>
+
     <!-- Reviews lijst -->
     <div class="space-y-6">
-        @foreach($reviews as $review) <!-- <--- loop over alle reviews -->
+        @forelse($reviews as $review)
             <div class="bg-white shadow-md rounded-lg p-6 relative">
                 <h3 class="text-lg font-semibold mb-1">
                     {{ $review->game->title }} - {{ $review->rating }}/5 ⭐
@@ -48,7 +64,9 @@
                     @endif
                 @endauth
             </div>
-        @endforeach
+        @empty
+            <p class="text-gray-600 text-center">Geen reviews gevonden.</p>
+        @endforelse
     </div>
 </div>
 @endsection
